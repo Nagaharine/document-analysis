@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="{% if current_user_pref.dark_mode %}dark{% else %}light{% endif %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vault Settings - InfoVault AI</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg-body: #f8fafc;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.06);
+            --radius-main: 16px;
+        }
+
+        [data-bs-theme="dark"] {
+            --bg-body: #0b0f19;
+            --sidebar-bg: #070a12;
+            --sidebar-hover: #131b2e;
+            --card-bg: #111827;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #1f293d;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        body {
+            background: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 270px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            padding: 32px 20px;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .logo {
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 36px;
+            padding-left: 8px;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #818cf8, #4f46e5);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+            color: #ffffff;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            height: 100%;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .menu a i {
+            font-size: 17px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .menu a:hover {
+            background: var(--sidebar-hover);
+            color: #ffffff;
+            transform: translateX(4px);
+        }
+
+        .menu .active {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 8px 16px rgba(79, 70, 229, 0.35);
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main {
+            margin-left: 270px;
+            padding: 40px;
+            width: calc(100% - 270px);
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .card-custom {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-main);
+            box-shadow: var(--shadow-sm);
+            padding: 28px;
+        }
+
+        .nav-settings .nav-link {
+            color: var(--text-muted);
+            border-radius: 12px;
+            font-weight: 600;
+            padding: 14px 18px;
+            margin-bottom: 6px;
+            text-align: left;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-settings .nav-link:hover {
+            background: rgba(99, 102, 241, 0.08);
+            color: var(--primary);
+        }
+
+        .nav-settings .nav-link.active {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .form-switch .form-check-input {
+            width: 2.8em;
+            height: 1.4em;
+            cursor: pointer;
+        }
+
+        .form-control, .form-select {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border-color: var(--border-color);
+            border-radius: 10px;
+            padding: 11px 14px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+            background-color: var(--card-bg);
+            color: var(--text-main);
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+
+        .badge-pro {
+            background: rgba(99, 102, 241, 0.12);
+            color: #6366f1;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <a href="{{ url_for('dashboard') }}" class="logo">
+            <div class="logo-icon"><i class="fa-solid fa-vault"></i></div>
+            <span>InfoVault AI</span>
+        </a>
+
+        <div class="menu">
+            <a href="{{ url_for('dashboard') }}"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+            <a href="{{ url_for('my_documents') }}"><i class="fa-solid fa-folder-open"></i> My Documents</a>
+            <a href="{{ url_for('ai_analytics') }}"><i class="fa-solid fa-brain"></i> AI Analytics</a>
+            <a href="{{ url_for('alerts') }}">
+                <i class="fa-solid fa-bell"></i> Expiry Alerts
+                {% if alert_count > 0 %}
+                <span class="badge bg-danger rounded-pill ms-auto">{{ alert_count }}</span>
+                {% endif %}
+            </a>
+            <a href="{{ url_for('settings') }}" class="active"><i class="fa-solid fa-sliders"></i> Settings</a>
+            
+            <div style="margin-top: auto;">
+                <a href="{{ url_for('logout') }}" style="color: #ef4444;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main">
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div>
+                <h1 class="h3 fw-bold mb-1"><i class="fa-solid fa-sliders text-primary me-2"></i>Account & Vault Settings</h1>
+                <p class="text-muted mb-0">Configure your profile, security, notification timing, AI intelligence, and privacy preferences.</p>
+            </div>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary px-3 py-2" style="border-radius: 12px;">
+                <i class="fa-solid fa-arrow-left me-2"></i>Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Flash Alert Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm mb-4" style="border-radius: 12px;" role="alert">
+                        <i class="fa-solid fa-circle-info me-2"></i>{{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="row g-4">
+            <!-- Settings Navigation Tabs -->
+            <div class="col-lg-3">
+                <div class="card-custom p-3">
+                    <div class="nav flex-column nav-settings" id="settings-tab" role="tablist">
+                        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#profile-tab">
+                            <i class="fa-regular fa-user"></i> Profile Details
+                        </button>
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#security-tab">
+                            <i class="fa-solid fa-shield-halved"></i> Security & 2FA
+                        </button>
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#notifications-tab">
+                            <i class="fa-regular fa-bell"></i> Expiry Alerts
+                        </button>
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#ai-tab">
+                            <i class="fa-solid fa-robot"></i> AI & Legal Engine
+                        </button>
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#doc-pref-tab">
+                            <i class="fa-solid fa-folder-tree"></i> Document Preferences
+                        </button>
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#appearance-tab">
+                            <i class="fa-solid fa-palette"></i> Appearance
+                        </button>
+                        <button class="nav-link text-danger" data-bs-toggle="pill" data-bs-target="#privacy-tab">
+                            <i class="fa-solid fa-lock"></i> Privacy & Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Content Panels -->
+            <div class="col-lg-9">
+                <div class="tab-content" id="settingsContent">
+                    
+                    <!-- 1. PROFILE TAB -->
+                    <div class="tab-pane fade show active" id="profile-tab">
+                        <div class="card-custom mb-4">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <h5 class="fw-bold m-0"><i class="fa-regular fa-user text-primary me-2"></i>Personal Profile</h5>
+                                <span class="badge-pro">Active Vault Member</span>
+                            </div>
+                            
+                            <form action="{{ url_for('update_profile') }}" method="POST">
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Full Name</label>
+                                        <input type="text" name="name" class="form-control" value="{{ user.name }}" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Email Address</label>
+                                        <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary px-4 py-2" style="border-radius: 10px;">
+                                    <i class="fa-solid fa-check me-2"></i>Save Profile Changes
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Change Password Card -->
+                        <div class="card-custom">
+                            <h5 class="fw-bold mb-3"><i class="fa-solid fa-key text-primary me-2"></i>Change Password</h5>
+                            <p class="text-muted small mb-4">Ensure your account uses a strong password with at least 8 characters.</p>
+
+                            <form action="{{ url_for('change_password') }}" method="POST">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Current Password</label>
+                                    <input type="password" name="current_password" class="form-control" placeholder="••••••••" required>
+                                </div>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">New Password</label>
+                                        <input type="password" name="new_password" class="form-control" placeholder="Minimum 8 characters" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Confirm New Password</label>
+                                        <input type="password" name="confirm_password" class="form-control" placeholder="Repeat new password" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-outline-primary px-4 py-2" style="border-radius: 10px;">
+                                    <i class="fa-solid fa-lock me-2"></i>Update Password
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 2. SECURITY TAB -->
+                    <div class="tab-pane fade" id="security-tab">
+                        <div class="card-custom mb-4">
+                            <h5 class="fw-bold mb-4"><i class="fa-solid fa-shield-halved text-primary me-2"></i>Security & Authentication</h5>
+                            
+                            <div class="setting-row">
+                                <div>
+                                    <h6 class="fw-bold mb-1">Two-Factor Authentication (2FA)</h6>
+                                    <p class="text-muted small mb-0">Require secondary verification code when signing in from unrecognized locations.</p>
+                                </div>
+                                <form action="{{ url_for('toggle_2fa') }}" method="POST">
+                                    <button type="submit" class="btn {% if user.two_factor_enabled %}btn-success{% else %}btn-outline-secondary{% endif %} btn-sm px-3 py-2" style="border-radius: 10px;">
+                                        <i class="fa-solid {% if user.two_factor_enabled %}fa-toggle-on{% else %}fa-toggle-off{% endif %} me-1"></i>
+                                        {% if user.two_factor_enabled %}Enabled{% else %}Disabled (Click to Enable){% endif %}
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div class="setting-row">
+                                <div>
+                                    <h6 class="fw-bold mb-1">Login Activity & Active Sessions</h6>
+                                    <p class="text-muted small mb-0">Currently logged in via browser on Windows (Current Session).</p>
+                                </div>
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
+                                    <i class="fa-solid fa-circle me-1" style="font-size: 8px;"></i> Active Now
+                                </span>
+                            </div>
+
+                            <div class="setting-row">
+                                <div>
+                                    <h6 class="fw-bold mb-1">Logout from All Devices</h6>
+                                    <p class="text-muted small mb-0">Terminate all other active vault sessions across other browsers or computers.</p>
+                                </div>
+                                <form action="{{ url_for('logout_all_devices') }}" method="POST">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm px-3 py-2" style="border-radius: 10px;">
+                                        <i class="fa-solid fa-arrow-right-from-bracket me-1"></i> Logout All Devices
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. NOTIFICATIONS TAB -->
+                    <div class="tab-pane fade" id="notifications-tab">
+                        <div class="card-custom">
+                            <h5 class="fw-bold mb-4"><i class="fa-regular fa-bell text-primary me-2"></i>Document Expiry Alerts</h5>
+                            
+                            <form action="{{ url_for('save_preferences') }}" method="POST">
+                                <!-- Hidden current values -->
+                                <input type="hidden" name="dark_mode" value="{% if user.dark_mode %}on{% endif %}">
+                                <input type="hidden" name="auto_classify" value="{% if user.auto_classify %}on{% endif %}">
+                                <input type="hidden" name="ai_summary" value="{% if user.ai_summary %}on{% endif %}">
+                                <input type="hidden" name="clause_detection" value="{% if user.clause_detection %}on{% endif %}">
+                                <input type="hidden" name="language" value="{{ user.language or 'en' }}">
+                                <input type="hidden" name="summary_style" value="{{ user.summary_style or 'simple' }}">
+                                <input type="hidden" name="doc_sort_order" value="{{ user.doc_sort_order or 'latest' }}">
+
+                                <div class="setting-row">
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Vault Expiry Notifications</h6>
+                                        <p class="text-muted small mb-0">Show warnings and notification badges for documents reaching expiration.</p>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="expiry_alerts" {% if user.expiry_alerts %}checked{% endif %}>
+                                    </div>
+                                </div>
+
+                                <div class="setting-row">
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Email Alerts</h6>
+                                        <p class="text-muted small mb-0">Receive automated email alerts directly to <strong>{{ user.email }}</strong>.</p>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="email_alerts" {% if user.email_alerts %}checked{% endif %}>
+                                    </div>
+                                </div>
+
+                                <div class="setting-row">
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Reminder Timing Window</h6>
+                                        <p class="text-muted small mb-0">Select how many days prior to document expiration the alert becomes active.</p>
+                                    </div>
+                                    <div style="min-width: 200px;">
+                                        <select class="form-select" name="reminder_days">
+                                            <option value="30" {% if user.reminder_days == 30 %}selected{% endif %}>30 Days Before Expiry</option>
+                                            <option value="15" {% if user.reminder_days == 15 %}selected{% endif %}>15 Days Before Expiry</option>
+                                            <option value="7" {% if user.reminder_days == 7 %}selected{% endif %}>7 Days Before Expiry</option>
+                                            <option value="1" {% if user.reminder_days == 1 %}selected{% endif %}>1 Day Before Expiry</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4">
+                                    <button type="submit" class="btn btn-primary px-4 py-2" style="border-radius: 10px;">
+                                        <i class="fa-solid fa-check me-2"></i>Save Notification Settings
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 4. AI & LEGAL PREFERENCES TAB -->
+                    <div class="tab-pane fade" id="ai-tab">
+                        <div class="card-custom">
+                            <h5 class="fw-bold mb-4"><i class="fa-solid fa-robot text-primary me-2"></i>AI & Legal Intelligence Engine</h5>
+                            
+                            <form action="{{ url_for('save_preferences') }}" method="POST">
+                                <!-- Pass-through fields -->
+                                <input type="hidden" name="dark_mode" value="{% if user.dark_mode %}on{% endif %}">
+                                <input type="hidden" name="expiry_alerts" value="{% if user.expiry_alerts %}on{% endif %}">
+                                <input type="hidden" name="email_alerts" value="{% if user.email_alerts %}on{% endif %}">
+                                <input type="hidden" name="reminder_days" value="{{ user.reminder_days or 7 }}">
+                                <input type="hidden" name="doc_sort_order" value="{{ user.doc_sort_order or 'latest' }}">
+
+                                <div class="setting-row">
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Automatic Document Classification</h6>
+                                        <p class="text-muted small mb-0">Automatically classify documents into Legal, Education, Financial, Identity, and Other.</p>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="auto_classify" {% if user.auto_classify %}checked{% endif %}>
+                                    </div>
+                                </div>
+
+                                <div class="setting-row">
+                                    <div>
+                                        <h6 class="fw-bold mb-1">AI Executive Summary Generation</h6>
+                                        <p class="text-muted small mb-0">Generate instant structured summaries when new documents are uploaded.</p>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="ai_summary" {% if user.ai_summary %}checked{% endif %}>
+                                    </div>
+                                </div>
+
+                                <div class="setting-row">
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Risky Legal Clause Detection</h6>
+                                        <p class="text-muted small mb-0">Identify notice periods, rent hikes, deposit deductions, lock-in penalties, and sublease terms.</p>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="clause_detection" {% if user.clause_detection %}checked{% endif %}>
+                                    </div>
+                                </div>
+
+                                <div class="setting-row">
+                                    <div>
+                                        <h6 class="fw-bold mb-1">AI Intelligence Language</h6>
+                                        <p class="text-muted small mb-0">Select preferred language for clause explanations and document summaries.</p>
+                                    </div>
+                                    <div style="min-width: 180px;">
+                                        <select class="form-select" name="language">
+                                            <option value="en" {% if user.language == 'en' %}selected{% endif %}>English</option>
+                                            <option value="ta" {% if user.language == 'ta' %}selected{% endif %}>தமிழ் (Tamil)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="setting-row">
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Summary Style</h6>
+                                        <p class="text-muted small mb-0">Choose between concise layman overview or detailed legal analysis.</p>
+                                    </div>
+                                    <div style="min-width: 180px;">
+                                        <select class="form-select" name="summary_style">
+                                            <option value="simple" {% if user.summary_style == 'simple' %}selected{% endif %}>Simple (Layman)</option>
+                                            <option value="detailed" {% if user.summary_style == 'detailed' %}selected{% endif %}>Detailed (In-depth)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4">
+                                    <button type="submit" class="btn btn-primary px-4 py-2" style="border-radius: 10px;">
+                                        <i class="fa-solid fa-check me-2"></i>Save AI Intelligence Settings
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 5. DOCUMENT PREFERENCES TAB -->
+                    <div class="tab-pane fade" id="doc-pref-tab">
+                        <div class="card-custom">
+                            <h5 class="fw-bold mb-4"><i class="fa-solid fa-folder-tree text-primary me-2"></i>Vault & Document Preferences</h5>
+                            
+                            <form action="{{ url_for('save_preferences') }}" method="POST">
+                                <input type="hidden" name="dark_mode" value="{% if user.dark_mode %}on{% endif %}">
+                                <input type="hidden" name="expiry_alerts" value="{% if user.expiry_alerts %}on{% endif %}">
+                                <input type="hidden" name="email_alerts" value="{% if user.email_alerts %}on{% endif %}">
+                                <input type="hidden" name="reminder_days" value="{{ user.reminder_days or 7 }}">
+                                <input type="hidden" name="auto_classify" value="{% if user.auto_classify %}on{% endif %}">
+                                <input type="hidden" name="ai_summary" value="{% if user.ai_summary %}on{% endif %}">
+                                <input type="hidden" name="clause_detection" value="{% if user.clause_detection %}on{% endif %}">
+                                <input type="hidden" name="language" value="{{ user.language or 'en' }}">
+                                <input type="hidden" name="summary_style" value="{{ user.summary_style or 'simple' }}">
+
+                                <div class="setting-row">
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Default Document Sort Order</h6>
+                                        <p class="text-muted small mb-0">Control the ordering of documents shown on your Dashboard and Vault library.</p>
+                                    </div>
+                                    <div style="min-width: 200px;">
+                                        <select class="form-select" name="doc_sort_order">
+                                            <option value="latest" {% if user.doc_sort_order == 'latest' %}selected{% endif %}>Latest Upload First</option>
+                                            <option value="name" {% if user.doc_sort_order == 'name' %}selected{% endif %}>Document Name (A-Z)</option>
+                                            <option value="expiry" {% if user.doc_sort_order == 'expiry' %}selected{% endif %}>Earliest Expiry First</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="setting-row">
+                                    <div>
+                                        <h6 class="fw-bold mb-1">SHA-256 Duplicate Protection</h6>
+                                        <p class="text-muted small mb-0">Automatically prevents re-uploading identical documents to preserve storage.</p>
+                                    </div>
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill">
+                                        <i class="fa-solid fa-fingerprint me-1"></i> Active
+                                    </span>
+                                </div>
+
+                                <div class="mt-4">
+                                    <button type="submit" class="btn btn-primary px-4 py-2" style="border-radius: 10px;">
+                                        <i class="fa-solid fa-check me-2"></i>Save Document Preferences
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 6. APPEARANCE TAB -->
+                    <div class="tab-pane fade" id="appearance-tab">
+                        <div class="card-custom">
+                            <h5 class="fw-bold mb-4"><i class="fa-solid fa-palette text-primary me-2"></i>Theme & Appearance</h5>
+                            
+                            <form action="{{ url_for('save_preferences') }}" method="POST">
+                                <input type="hidden" name="expiry_alerts" value="{% if user.expiry_alerts %}on{% endif %}">
+                                <input type="hidden" name="email_alerts" value="{% if user.email_alerts %}on{% endif %}">
+                                <input type="hidden" name="reminder_days" value="{{ user.reminder_days or 7 }}">
+                                <input type="hidden" name="auto_classify" value="{% if user.auto_classify %}on{% endif %}">
+                                <input type="hidden" name="ai_summary" value="{% if user.ai_summary %}on{% endif %}">
+                                <input type="hidden" name="clause_detection" value="{% if user.clause_detection %}on{% endif %}">
+                                <input type="hidden" name="language" value="{{ user.language or 'en' }}">
+                                <input type="hidden" name="summary_style" value="{{ user.summary_style or 'simple' }}">
+                                <input type="hidden" name="doc_sort_order" value="{{ user.doc_sort_order or 'latest' }}">
+
+                                <div class="setting-row">
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Dark Mode Theme</h6>
+                                        <p class="text-muted small mb-0">Switch between sleek enterprise dark mode and bright daytime mode.</p>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="dark_mode" id="themeSwitch" {% if user.dark_mode %}checked{% endif %}>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4">
+                                    <button type="submit" class="btn btn-primary px-4 py-2" style="border-radius: 10px;">
+                                        <i class="fa-solid fa-paint-roller me-2"></i>Apply Theme Settings
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 7. PRIVACY & DATA TAB -->
+                    <div class="tab-pane fade" id="privacy-tab">
+                        <div class="card-custom border-danger">
+                            <h5 class="fw-bold mb-3 text-danger"><i class="fa-solid fa-triangle-exclamation me-2"></i>Privacy, Data Export & Deletion</h5>
+                            <p class="text-muted small mb-4">Export your document metadata archive or execute permanent data wipe requests.</p>
+                            
+                            <div class="d-flex flex-column gap-3">
+                                <div class="p-3 border rounded-3 d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Download My Vault Archive</h6>
+                                        <p class="text-muted small mb-0">Export a complete JSON payload of your profile metadata and categorized documents.</p>
+                                    </div>
+                                    <a href="{{ url_for('download_my_data') }}" target="_blank" class="btn btn-outline-secondary px-3 py-2" style="border-radius: 10px;">
+                                        <i class="fa-solid fa-download me-1"></i> Download JSON
+                                    </a>
+                                </div>
+
+                                <div class="p-3 border border-warning-subtle bg-warning-subtle rounded-3 d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="fw-bold text-warning-emphasis mb-1">Delete All Documents</h6>
+                                        <p class="text-muted small mb-0">Removes all uploaded documents and extracted intelligence, keeping your login active.</p>
+                                    </div>
+                                    <form action="{{ url_for('delete_all_documents') }}" method="POST" onsubmit="return confirm('⚠️ Are you sure you want to delete ALL documents? This action cannot be undone.');">
+                                        <button type="submit" class="btn btn-warning px-3 py-2" style="border-radius: 10px;">
+                                            <i class="fa-solid fa-trash-can me-1"></i> Delete All Docs
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <div class="p-3 border border-danger-subtle bg-danger-subtle rounded-3 d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="fw-bold text-danger mb-1">Permanent Account Deletion</h6>
+                                        <p class="text-muted small mb-0">Irreversibly delete your account, authentication credentials, and all vault documents.</p>
+                                    </div>
+                                    <form action="{{ url_for('delete_account') }}" method="POST" onsubmit="return confirm('🚨 CRITICAL WARNING: You are about to permanently delete your account and all data. Proceed?');">
+                                        <button type="submit" class="btn btn-danger px-3 py-2" style="border-radius: 10px;">
+                                            <i class="fa-solid fa-user-xmark me-1"></i> Delete Account
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

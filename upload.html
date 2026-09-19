@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Upload Document - InfoVault AI</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .upload-container {
+            width: 500px;
+            background: white;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 8px;
+            color: #111827;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .upload-area {
+            border: 2px dashed #6366f1;
+            border-radius: 14px;
+            padding: 35px 20px;
+            text-align: center;
+            background: #f8f9ff;
+        }
+
+        .icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .upload-area h3 {
+            margin-bottom: 8px;
+        }
+
+        .upload-area p {
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            background: #4f46e5;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #4338ca;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #4f46e5;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="upload-container">
+
+    <h1>📤 Upload Document</h1>
+
+    <p class="subtitle">
+        Securely upload your personal or legal document
+    </p>
+
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+
+        <div class="upload-area">
+
+            <div class="icon">📄</div>
+
+            <h3>Select Your Document</h3>
+
+            <p>
+                Supported formats: PDF, JPG, JPEG, PNG
+            </p>
+
+            <input
+                type="file"
+                name="document"
+                accept=".pdf,.jpg,.jpeg,.png"
+                required
+            >
+
+        </div>
+
+        <button type="submit">
+            Upload Document
+        </button>
+
+    </form>
+
+    <a href="/dashboard" class="back">
+        ← Back to Dashboard
+    </a>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InfoVault AI - Register</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            background-color: #0f172a;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* --- Alert Messages CSS --- */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* --- Left Side: Hero Showcase --- */
+        .hero-section {
+            flex: 1.2;
+            background: radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.15) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(124, 58, 237, 0.15) 0%, transparent 40%),
+                        #090d16;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        .brand-name {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-content {
+            max-width: 520px;
+            margin: 40px 0;
+        }
+
+        .hero-title {
+            font-size: 38px;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 16px;
+        }
+
+        .hero-title span {
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-description {
+            color: #94a3b8;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 36px;
+        }
+
+        .perks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .perk-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #cbd5e1;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .perk-item i {
+            color: #10b981;
+            font-size: 18px;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 8px;
+            border-radius: 50%;
+        }
+
+        .hero-footer {
+            font-size: 13px;
+            color: #475569;
+        }
+
+        /* --- Right Side: Register Card --- */
+        .register-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            background: #0f172a;
+            position: relative;
+        }
+
+        .register-section::before {
+            content: '';
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            background: #7c3aed;
+            filter: blur(160px);
+            opacity: 0.15;
+            border-radius: 50%;
+        }
+
+        .register-card {
+            width: 100%;
+            max-width: 440px;
+            background: rgba(30, 41, 59, 0.7);
+            padding: 36px 40px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-header {
+            margin-bottom: 28px;
+        }
+
+        .card-header h2 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .card-header p {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i.left-icon {
+            position: absolute;
+            left: 16px;
+            color: #64748b;
+            font-size: 15px;
+            transition: color 0.2s;
+            pointer-events: none;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 13px 44px 13px 44px; /* Right padding for Eye icon */
+            font-size: 14px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .input-wrapper input::placeholder {
+            color: #475569;
+        }
+
+        .input-wrapper input:focus {
+            border-color: #3b82f6;
+            background: rgba(15, 23, 42, 0.9);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        }
+
+        .input-wrapper input:focus + i.left-icon {
+            color: #3b82f6;
+        }
+
+        /* Eye Icon Styling */
+        .toggle-password {
+            position: absolute;
+            right: 16px;
+            color: #64748b;
+            cursor: pointer;
+            font-size: 15px;
+            transition: color 0.2s ease;
+            user-select: none;
+        }
+
+        .toggle-password:hover {
+            color: #60a5fa;
+        }
+
+        .terms {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 20px 0;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .terms input[type="checkbox"] {
+            accent-color: #2563eb;
+            width: 16px;
+            height: 16px;
+            margin-top: 2px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -5px rgba(37, 99, 235, 0.6);
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        .login-footer a {
+            color: #60a5fa;
+            font-weight: 600;
+            text-decoration: none;
+            margin-left: 4px;
+        }
+
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 992px) {
+            .hero-section {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Left Side: Hero Info -->
+        <div class="hero-section">
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-vault"></i>
+                </div>
+                <span class="brand-name">InfoVault AI</span>
+            </div>
+
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Start Securing Your <span>Legal Documents</span>
+                </h1>
+                <p class="hero-description">
+                    Create an account to unlock AI-powered document classification, instant risk detection, and zero-duplicate storage.
+                </p>
+
+                <div class="perks-list">
+                    <div class="perk-item">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Unlimited Document Uploads & Categorization</span>
+                    </div>
+                    <div class="perk-item">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>AI Legal Intelligence & Clause Highlighting</span>
+                    </div>
+                    <div class="perk-item">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>SHA-256 Duplicate Protection & Reminders</span>
+                    </div>
+                    <div class="perk-item">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Two-Factor Authentication (2FA) Ready</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-footer">
+                &copy; 2026 InfoVault AI. All rights reserved.
+            </div>
+        </div>
+
+        <!-- Right Side: Register Form Card -->
+        <div class="register-section">
+            <div class="register-card">
+                <div class="card-header">
+                    <h2>Create Account</h2>
+                    <p>Join InfoVault AI to manage documents intelligently</p>
+                </div>
+
+                <!-- Flash Messages Block -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="alert alert-{{ category }}">
+                        <i class="fa-solid {% if category == 'success' %}fa-circle-check{% else %}fa-triangle-exclamation{% endif %}"></i>
+                        <span>{{ message }}</span>
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+
+                <form method="POST" action="/register">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="name" name="name" placeholder="John Doe" required>
+                            <i class="fa-regular fa-user left-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <div class="input-wrapper">
+                            <input type="email" id="email" name="email" placeholder="name@company.com" required>
+                            <i class="fa-regular fa-envelope left-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="password" name="password" placeholder="Create password" required>
+                            <i class="fa-solid fa-lock left-icon"></i>
+                            <i class="fa-regular fa-eye toggle-password" data-target="password"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm password" required>
+                            <i class="fa-solid fa-shield-halved left-icon"></i>
+                            <i class="fa-regular fa-eye toggle-password" data-target="confirm_password"></i>
+                        </div>
+                    </div>
+
+                    <div class="terms">
+                        <input type="checkbox" id="terms" required>
+                        <label for="terms" style="text-transform: none; font-weight: normal; margin: 0; color: #94a3b8;">
+                            I agree to the Terms of Service and Privacy Policy
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        Create Account
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <div class="login-footer">
+                    Already have an account? 
+                    <a href="/">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script for Eye Icon Toggle -->
+    <script>
+        const togglePasswordButtons = document.querySelectorAll('.toggle-password');
+
+        togglePasswordButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const targetId = this.getAttribute('data-target');
+                const inputField = document.getElementById(targetId);
+
+                const type = inputField.getAttribute('type') === 'password' ? 'text' : 'password';
+                inputField.setAttribute('type', type);
+
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
+        });
+    </script>
+</body>
+</html>

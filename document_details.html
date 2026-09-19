@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="{% if current_user_pref.dark_mode %}dark{% else %}light{% endif %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ doc.title }} - Document Intelligence | InfoVault AI</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg-body: #f8fafc;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.06);
+            --radius-main: 16px;
+        }
+
+        [data-bs-theme="dark"] {
+            --bg-body: #0b0f19;
+            --sidebar-bg: #070a12;
+            --sidebar-hover: #131b2e;
+            --card-bg: #111827;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #1f293d;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 270px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            padding: 32px 20px;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .logo {
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 36px;
+            padding-left: 8px;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #818cf8, #4f46e5);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+            color: #ffffff;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            height: 100%;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .menu a i {
+            font-size: 17px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .menu a:hover {
+            background: var(--sidebar-hover);
+            color: #ffffff;
+            transform: translateX(4px);
+        }
+
+        .menu .active {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 8px 16px rgba(79, 70, 229, 0.35);
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main {
+            margin-left: 270px;
+            padding: 40px;
+            width: calc(100% - 270px);
+        }
+
+        .card-custom {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-main);
+            box-shadow: var(--shadow-sm);
+            padding: 24px;
+        }
+
+        /* Preview Frame */
+        .preview-container {
+            background: #0f172a;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            min-height: 620px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-toolbar {
+            background: #1e293b;
+            padding: 12px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ffffff;
+            font-size: 13px;
+        }
+
+        .preview-body {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            min-height: 560px;
+        }
+
+        .preview-body iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+
+        .preview-body img {
+            max-width: 100%;
+            max-height: 580px;
+            object-fit: contain;
+            padding: 16px;
+        }
+
+        /* Extracted Field Chip */
+        .field-chip {
+            background: rgba(99, 102, 241, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 16px;
+            height: 100%;
+        }
+
+        .field-chip .label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .field-chip .value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            word-break: break-word;
+        }
+
+        /* Legal Risk Card */
+        .clause-card {
+            border-left: 4px solid var(--primary);
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 16px;
+            border-top: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .clause-card.risk-high {
+            border-left-color: #ef4444;
+            background: rgba(239, 68, 68, 0.02);
+        }
+
+        .clause-card.risk-medium {
+            border-left-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.02);
+        }
+
+        .clause-card.risk-low {
+            border-left-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.02);
+        }
+
+        .disclaimer-banner {
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 13px;
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <a href="{{ url_for('dashboard') }}" class="logo">
+            <div class="logo-icon"><i class="fa-solid fa-vault"></i></div>
+            <span>InfoVault AI</span>
+        </a>
+
+        <div class="menu">
+            <a href="{{ url_for('dashboard') }}"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+            <a href="{{ url_for('my_documents') }}" class="active"><i class="fa-solid fa-folder-open"></i> My Documents</a>
+            <a href="{{ url_for('ai_analytics') }}"><i class="fa-solid fa-brain"></i> AI Analytics</a>
+            <a href="{{ url_for('alerts') }}">
+                <i class="fa-solid fa-bell"></i> Expiry Alerts
+                {% if alert_count > 0 %}
+                <span class="badge bg-danger rounded-pill ms-auto">{{ alert_count }}</span>
+                {% endif %}
+            </a>
+            <a href="{{ url_for('settings') }}"><i class="fa-solid fa-sliders"></i> Settings</a>
+            
+            <div style="margin-top: auto;">
+                <a href="{{ url_for('logout') }}" style="color: #ef4444;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+        <!-- Top Action Bar -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <a href="{{ url_for('my_documents') }}" class="text-decoration-none text-muted small fw-semibold">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Back to My Documents
+                </a>
+                <h2 class="fw-bold mt-1 mb-0">{{ doc.title }}</h2>
+            </div>
+
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('download_document', document_id=doc.id) }}" class="btn btn-outline-primary px-3 py-2" style="border-radius: 10px;">
+                    <i class="fa-solid fa-download me-2"></i>Download File
+                </a>
+                <a href="{{ url_for('view_document', document_id=doc.id) }}" target="_blank" class="btn btn-outline-secondary px-3 py-2" style="border-radius: 10px;">
+                    <i class="fa-solid fa-up-right-from-square me-2"></i>Open Full View
+                </a>
+                <a href="{{ url_for('delete_document', document_id=doc.id) }}" class="btn btn-outline-danger px-3 py-2" style="border-radius: 10px;" onclick="return confirm('Delete this document from your vault?');">
+                    <i class="fa-solid fa-trash me-2"></i>Delete
+                </a>
+            </div>
+        </div>
+
+        <!-- Document Metadata Header Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card-custom py-3 px-3 d-flex align-items-center gap-3">
+                    <div class="p-3 bg-primary-subtle text-primary rounded-3">
+                        <i class="fa-solid fa-layer-group fa-lg"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-semibold">Category</div>
+                        <div class="fw-bold text-primary">{{ doc.category }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card-custom py-3 px-3 d-flex align-items-center gap-3">
+                    <div class="p-3 bg-info-subtle text-info rounded-3">
+                        <i class="fa-solid fa-file-lines fa-lg"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-semibold">Document Type</div>
+                        <div class="fw-bold">{{ doc.document_type }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card-custom py-3 px-3 d-flex align-items-center gap-3">
+                    <div class="p-3 bg-{{ doc.status_badge }}-subtle text-{{ doc.status_badge }} rounded-3">
+                        <i class="fa-solid fa-calendar-check fa-lg"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-semibold">Expiry Status</div>
+                        <div class="fw-bold text-{{ doc.status_badge }}">
+                            {{ doc.expiry_status }}
+                            {% if doc.days_left is not none %}
+                                <span class="small">({{ doc.days_left }}d left)</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card-custom py-3 px-3 d-flex align-items-center gap-3">
+                    <div class="p-3 bg-secondary-subtle text-secondary rounded-3">
+                        <i class="fa-solid fa-hard-drive fa-lg"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-semibold">File Details</div>
+                        <div class="fw-bold">{{ file_ext|upper }} • {{ file_size_kb }} KB</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Split Grid: Document Preview & Intelligence Panel -->
+        <div class="row g-4">
+            
+            <!-- Left Side: Interactive Document Preview -->
+            <div class="col-lg-6">
+                <div class="preview-container shadow-sm">
+                    <div class="preview-toolbar">
+                        <span><i class="fa-solid fa-eye me-2"></i>Interactive Document Preview</span>
+                        <span class="badge bg-secondary">{{ file_ext|upper }}</span>
+                    </div>
+
+                    <div class="preview-body">
+                        {% if file_ext in ['jpg', 'jpeg', 'png', 'webp'] %}
+                            <img src="{{ url_for('view_document', document_id=doc.id) }}" alt="{{ doc.title }}">
+                        {% elif file_ext in ['pdf', 'docx', 'txt'] %}
+                            <iframe src="{{ url_for('view_document', document_id=doc.id) }}"></iframe>
+                        {% else %}
+                            <div class="p-4 text-center text-muted">
+                                <i class="fa-solid fa-file-circle-question fa-3x mb-3 text-secondary"></i>
+                                <p>Preview unavailable for this format.</p>
+                                <a href="{{ url_for('download_document', document_id=doc.id) }}" class="btn btn-primary btn-sm">Download File</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: AI Intelligence & Extracted Data -->
+            <div class="col-lg-6">
+                
+                <!-- AI Executive Summary Card -->
+                <div class="card-custom mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold m-0"><i class="fa-solid fa-brain text-primary me-2"></i>AI Executive Summary</h5>
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">InfoVault AI</span>
+                    </div>
+                    <p class="text-main mb-0" style="line-height: 1.6;">
+                        {{ doc.summary or 'Automated executive summary generated upon document analysis.' }}
+                    </p>
+                </div>
+
+                <!-- Extracted Key Information Grid -->
+                <div class="card-custom mb-4">
+                    <h5 class="fw-bold mb-3"><i class="fa-solid fa-table-list text-primary me-2"></i>Extracted Key Entities</h5>
+                    
+                    {% if extracted_data %}
+                        <div class="row g-3">
+                            {% for key, val in extracted_data.items() %}
+                                <div class="col-md-6">
+                                    <div class="field-chip">
+                                        <div class="label">{{ key }}</div>
+                                        <div class="value {% if val == 'Not Found' %}text-muted fst-italic fw-normal{% endif %}">
+                                            {{ val }}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0 small">No specific structured fields detected in this document.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Legal Intelligence & Risky Clauses (if Legal Document) -->
+                {% if doc.category == 'Legal' or risk_clauses %}
+                <div class="card-custom mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold m-0"><i class="fa-solid fa-scale-balanced text-primary me-2"></i>Legal Intelligence & Risky Clauses</h5>
+                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle">{{ risk_clauses|length }} Clauses Detected</span>
+                    </div>
+
+                    <!-- Mandatory Legal Disclaimer Banner -->
+                    <div class="disclaimer-banner mb-3">
+                        <i class="fa-solid fa-shield-halved text-primary me-2"></i>
+                        <strong>Legal Disclaimer:</strong> InfoVault AI provides automated summaries and clause explanations for informational convenience. This analysis is not formal legal advice.
+                    </div>
+
+                    {% for clause in risk_clauses %}
+                        <div class="clause-card risk-{{ clause.risk_level|lower }}">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="fw-bold m-0">{{ clause.title }}</h6>
+                                <span class="badge bg-{{ clause.badge_color }} rounded-pill">{{ clause.risk_level }} Risk</span>
+                            </div>
+                            
+                            <div class="p-2 bg-body-tertiary rounded small mb-2 fst-italic text-muted border">
+                                "{{ clause.snippet }}"
+                            </div>
+
+                            <div class="mb-2">
+                                <div class="small fw-bold text-primary">Simple Explanation:</div>
+                                <div class="small">{{ clause.explanation }}</div>
+                            </div>
+
+                            {% if clause.recommendation %}
+                            <div class="p-2 bg-warning-subtle rounded small text-warning-emphasis">
+                                <i class="fa-solid fa-triangle-exclamation me-1"></i><strong>Recommendation:</strong> {{ clause.recommendation }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Collapsible Extracted Raw OCR Text -->
+                <div class="card-custom">
+                    <div class="d-flex justify-content-between align-items-center" data-bs-toggle="collapse" data-bs-target="#rawTextCollapse" style="cursor: pointer;">
+                        <h6 class="fw-bold m-0"><i class="fa-solid fa-code text-primary me-2"></i>Indexed Extracted Text</h6>
+                        <i class="fa-solid fa-chevron-down text-muted"></i>
+                    </div>
+                    <div class="collapse mt-3" id="rawTextCollapse">
+                        <pre class="p-3 bg-body-tertiary rounded small border" style="max-height: 250px; overflow-y: auto; white-space: pre-wrap; font-family: monospace;">{{ doc.extracted_text or 'No raw text extracted.' }}</pre>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
